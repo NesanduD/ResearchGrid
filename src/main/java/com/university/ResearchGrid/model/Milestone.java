@@ -1,21 +1,22 @@
 package com.university.ResearchGrid.model;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
-import java.util.List;
 
 @Entity
 @Data
-public class ResearchProject {
+public class Milestone {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String title;
-    private String researchArea;
+    private String description;
     private String status;
 
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
-    private List<Milestone> milestones;
+    @ManyToOne
+    @JoinColumn(name = "project_id")
+    @JsonIgnore
+    private ResearchProject project;
 }

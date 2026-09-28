@@ -1,6 +1,6 @@
 package com.university.ResearchGrid.controller;
 import com.university.ResearchGrid.model.ResearchProject;
-import com.university.ResearchGrid.repository.ResearchProjectRepository;
+import com.university.ResearchGrid.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,15 +11,15 @@ import java.util.List;
 public class ProjectController {
 
     @Autowired
-    private ResearchProjectRepository repository;
+    private ProjectService projectService;
 
     @PostMapping
     public ResearchProject createProject(@RequestBody ResearchProject project) {
-        return repository.save(project);
+        return projectService.createProject(project);
     }
 
     @GetMapping
     public List<ResearchProject> getAllProjects() {
-        return repository.findAll();
+        return projectService.getAllProjects();
     }
 }
