@@ -1,4 +1,5 @@
 package com.university.ResearchGrid.controller;
+import com.university.ResearchGrid.model.Milestone;
 import com.university.ResearchGrid.model.ResearchProject;
 import com.university.ResearchGrid.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,5 +22,10 @@ public class ProjectController {
     @GetMapping
     public List<ResearchProject> getAllProjects() {
         return projectService.getAllProjects();
+    }
+
+    @PostMapping("/{projectId}/milestones")
+    public Milestone addMilestone(@PathVariable Long projectId, @RequestBody Milestone milestone) {
+        return projectService.addMilestoneToProject(projectId, milestone);
     }
 }

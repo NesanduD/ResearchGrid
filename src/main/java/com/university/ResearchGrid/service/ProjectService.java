@@ -1,5 +1,7 @@
 package com.university.ResearchGrid.service;
+import com.university.ResearchGrid.model.Milestone;
 import com.university.ResearchGrid.model.ResearchProject;
+import com.university.ResearchGrid.repository.MilestoneRepository;
 import com.university.ResearchGrid.repository.ResearchProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,14 +12,28 @@ import java.util.List;
 public class ProjectService {
 
     @Autowired
-    private ResearchProjectRepository repository;
+    private ResearchProjectRepository projectRepository;
+
+    @Autowired
+    private MilestoneRepository milestoneRepository;
 
     public ResearchProject createProject(ResearchProject project) {
-        // Later, we will add business logic here (like checking if the title already exists)
-        return repository.save(project);
+        return projectRepository.save(project);
     }
 
     public List<ResearchProject> getAllProjects() {
-        return repository.findAll();
+        return projectRepository.findAll();
+    }
+
+    public Milestone addMilestoneToProject(Long projectId, Milestone milestone) {
+        // 1. Find the parent project, or throw an error if it doesn't exist
+        ResearchProject project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new RuntimeException("Project not found with ID: " + projectId));
+
+        // 2. Attach the project to the milestone
+        milestone.setProject(project);
+
+        // 3. Save the milestone to the database
+        return milestoneRepository.save(milestone);
     }
 }
