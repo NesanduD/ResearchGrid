@@ -38,4 +38,19 @@ public class ProjectController {
     public ResearchProject addTeamMember(@PathVariable Long projectId, @PathVariable Long researcherId) {
         return projectService.addTeamMember(projectId, researcherId);
     }
+
+    @GetMapping("/search")
+    public List<ResearchProject> searchProjects(
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String researchArea){
+
+        if (status != null) {
+            return projectService.getProjectsByStatus(status);
+        } else if (researchArea != null) {
+            return projectService.getProjectsByArea(researchArea);
+        }
+
+        // If they don't provide a search term, just return all of them
+        return projectService.getAllProjects();
+    }
 }

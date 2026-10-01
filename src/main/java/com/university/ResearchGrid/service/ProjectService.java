@@ -66,4 +66,12 @@ public class ProjectService {
         project.getTeamMembers().add(researcher);
         return projectRepository.save(project);
     }
+
+    public List<ResearchProject> getProjectsByStatus(String status){
+        return projectRepository.findByStatus(status);
+    }
+
+    public List<ResearchProject> getProjectsByArea(String researchArea){
+        return projectRepository.findByResearchArea(researchArea);
+    }
 }
