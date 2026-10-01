@@ -28,4 +28,14 @@ public class ProjectController {
     public Milestone addMilestone(@PathVariable Long projectId, @RequestBody Milestone milestone) {
         return projectService.addMilestoneToProject(projectId, milestone);
     }
+
+    @PutMapping("/{projectId}/investigator/{researcherId}")
+    public ResearchProject assignInvestigator(@PathVariable Long projectId, @PathVariable Long researcherId) {
+        return projectService.assignInvestigator(projectId, researcherId);
+    }
+
+    @PostMapping("/{projectId}/members/{researcherId}")
+    public ResearchProject addTeamMember(@PathVariable Long projectId, @PathVariable Long researcherId) {
+        return projectService.addTeamMember(projectId, researcherId);
+    }
 }
