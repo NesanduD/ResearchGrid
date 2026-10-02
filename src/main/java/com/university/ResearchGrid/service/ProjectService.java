@@ -7,6 +7,7 @@ import com.university.ResearchGrid.repository.ResearchProjectRepository;
 import com.university.ResearchGrid.repository.ResearcherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.cache.annotation.Cacheable;
 
 import java.util.List;
 
@@ -26,7 +27,9 @@ public class ProjectService {
         return projectRepository.save(project);
     }
 
+    @Cacheable(value = "project_cache")
     public List<ResearchProject> getAllProjects() {
+        System.out.println("Fetching all projects from PostgreSQL...");
         return projectRepository.findAll();
     }
 
@@ -66,12 +69,14 @@ public class ProjectService {
         project.getTeamMembers().add(researcher);
         return projectRepository.save(project);
     }
-
+    @Cacheable(value = "project_cache", key = "#status")
     public List<ResearchProject> getProjectsByStatus(String status){
+        System.out.println("Fetching projects by status from PostgreSQL...");
         return projectRepository.findByStatus(status);
     }
-
+    @Cacheable(value = "project_cache", key = "#researchArea")
     public List<ResearchProject> getProjectsByArea(String researchArea){
+        System.out.println("Fetching projects by area from PostgreSQL...");
         return projectRepository.findByResearchArea(researchArea);
     }
 }

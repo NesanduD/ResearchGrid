@@ -1,13 +1,22 @@
 package com.university.ResearchGrid.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import java.util.List;
-import java.util.ArrayList;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serial;
+import java.util.HashSet;
+import java.io.Serializable;
+import java.util.Set;
 
 @Entity
-@Data
-public class ResearchProject {
+@Getter
+@Setter
+public class ResearchProject implements Serializable {
+
+    // It is highly recommended to add a serialVersionUID
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,14 +30,15 @@ public class ResearchProject {
     @JoinColumn(name = "investigator_id")
     private Researcher principalInvestigator;
 
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
-    private List<Milestone> milestones;
+    // FetchType.EAGER tells Hibernate to load this immediately so Redis can cache it safely
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<Milestone> milestones;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "project_team",
             joinColumns = @JoinColumn(name = "project_id"),
             inverseJoinColumns = @JoinColumn(name = "researcher_id")
     )
-    private List<Researcher> teamMembers = new ArrayList<>();
+    private Set<Researcher> teamMembers = new HashSet<>();
 }
