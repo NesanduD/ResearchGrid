@@ -53,4 +53,9 @@ public class ProjectController {
         // If they don't provide a search term, just return all of them
         return projectService.getAllProjects();
     }
+
+    @GetMapping("/{projectId}/ai-milestones")
+    public String generateAiMilestones(@PathVariable Long projectId){
+        return projectService.getAiMilestoneSuggestions(projectId);
+    }
 }

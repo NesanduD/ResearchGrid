@@ -23,6 +23,9 @@ public class ProjectService {
     @Autowired
     private ResearcherRepository researcherRepository;
 
+    @Autowired
+    private GeminiService geminiService;
+
     public ResearchProject createProject(ResearchProject project) {
         return projectRepository.save(project);
     }
@@ -78,5 +81,12 @@ public class ProjectService {
     public List<ResearchProject> getProjectsByArea(String researchArea){
         System.out.println("Fetching projects by area from PostgreSQL...");
         return projectRepository.findByResearchArea(researchArea);
+    }
+
+    public String getAiMilestoneSuggestions(Long projectId){
+        ResearchProject project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new RuntimeException("Project not found with ID: " + projectId));
+
+        return geminiService.suggestMilestones(project.getTitle(), project.getResearchArea());
     }
 }
