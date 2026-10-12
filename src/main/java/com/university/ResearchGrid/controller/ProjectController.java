@@ -1,10 +1,12 @@
 package com.university.ResearchGrid.controller;
+
 import com.university.ResearchGrid.model.Milestone;
 import com.university.ResearchGrid.model.ResearchProject;
 import com.university.ResearchGrid.service.ProjectService;
+import com.university.ResearchGrid.service.GeminiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
+import java.util.Map;
 import java.util.List;
 
 @CrossOrigin(origins = "http://localhost:5173")
@@ -14,6 +16,9 @@ public class ProjectController {
 
     @Autowired
     private ProjectService projectService;
+
+    @Autowired
+    private GeminiService geminiService; // Injected the GeminiService instance here
 
     @PostMapping
     public ResearchProject createProject(@RequestBody ResearchProject project) {
@@ -56,12 +61,26 @@ public class ProjectController {
             return projectService.getProjectsByArea(researchArea);
         }
 
-        // If they don't provide a search term, just return all of them
         return projectService.getAllProjects();
     }
 
     @GetMapping("/{projectId}/ai-milestones")
     public String generateAiMilestones(@PathVariable Long projectId){
         return projectService.getAiMilestoneSuggestions(projectId);
+    }
+
+    @PostMapping("/ai/summarize-abstract")
+    public String summarizeAbstract(@RequestBody Map<String, String> payload) {
+        String abstractText = payload.get("abstractText");
+        // Now using the injected lowercase instance
+        return geminiService.summarizeAbstract(abstractText);
+    }
+
+    @PostMapping("/ai/classify-domain")
+    public String classifyDomain(@RequestBody Map<String, String> payload) {
+        String title = payload.getOrDefault("title", "");
+        String description = payload.getOrDefault("description", "");
+        // Now using the injected lowercase instance
+        return geminiService.classifyDomain(title, description);
     }
 }

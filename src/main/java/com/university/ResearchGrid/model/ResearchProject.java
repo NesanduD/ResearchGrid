@@ -5,8 +5,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serial;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -33,6 +35,12 @@ public class ResearchProject implements Serializable {
     // FetchType.EAGER tells Hibernate to load this immediately so Redis can cache it safely
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Milestone> milestones;
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<GrantAllocation> grants = new ArrayList<>();
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Publication> publications = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
