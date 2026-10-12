@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/projects")
 public class ProjectController {
@@ -17,6 +18,11 @@ public class ProjectController {
     @PostMapping
     public ResearchProject createProject(@RequestBody ResearchProject project) {
         return projectService.createProject(project);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteProject(@PathVariable Long id) {
+        projectService.deleteProject(id);
     }
 
     @GetMapping

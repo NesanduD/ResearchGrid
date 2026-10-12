@@ -6,6 +6,7 @@ import com.university.ResearchGrid.repository.MilestoneRepository;
 import com.university.ResearchGrid.repository.ResearchProjectRepository;
 import com.university.ResearchGrid.repository.ResearcherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.cache.annotation.Cacheable;
 
@@ -26,8 +27,14 @@ public class ProjectService {
     @Autowired
     private GeminiService geminiService;
 
+    @CacheEvict(value = "project_cache", allEntries = true)
     public ResearchProject createProject(ResearchProject project) {
         return projectRepository.save(project);
+    }
+
+    @CacheEvict(value = "project_cache", allEntries = true)
+    public void deleteProject(Long id) {
+        projectRepository.deleteById(id);
     }
 
     @Cacheable(value = "project_cache")
