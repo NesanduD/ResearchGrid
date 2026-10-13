@@ -1,15 +1,18 @@
 package com.university.ResearchGrid.controller;
 
-import com.university.ResearchGrid.model.Milestone;
+import org.springframework.web.bind.annotation.GetMapping;
+import com.university.ResearchGrid.repository.ResearchProjectRepository;
 import com.university.ResearchGrid.model.ResearchProject;
+import org.springframework.cache.annotation.CacheEvict;
+import com.university.ResearchGrid.model.Milestone;
 import com.university.ResearchGrid.service.ProjectService;
 import com.university.ResearchGrid.service.GeminiService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/projects")
 public class ProjectController {
@@ -18,11 +21,16 @@ public class ProjectController {
     private ProjectService projectService;
 
     @Autowired
+    private ResearchProjectRepository projectRepository;
+
+    @Autowired
     private GeminiService geminiService; // Injected the GeminiService instance here
 
     @PostMapping
-    public ResearchProject createProject(@RequestBody ResearchProject project) {
-        return projectService.createProject(project);
+    @CacheEvict(value = "dashboardMetrics", allEntries = true) // Wipes the Redis cache when a new project is saved!
+    public ResponseEntity<?> createProject(@RequestBody ResearchProject project) {
+        ResearchProject savedProject = projectRepository.save(project);
+        return ResponseEntity.ok(savedProject);
     }
 
     @DeleteMapping("/{id}")
@@ -31,8 +39,9 @@ public class ProjectController {
     }
 
     @GetMapping
-    public List<ResearchProject> getAllProjects() {
-        return projectService.getAllProjects();
+    public ResponseEntity<List<ResearchProject>> getAllProjects() {
+        List<ResearchProject> projects = projectRepository.findAll();
+        return ResponseEntity.ok(projects);
     }
 
     @PostMapping("/{projectId}/milestones")
@@ -69,7 +78,7 @@ public class ProjectController {
         return projectService.getAiMilestoneSuggestions(projectId);
     }
 
-    @PostMapping("/ai/summarize-abstract")
+    @PostMapping("/ai/summarize")
     public String summarizeAbstract(@RequestBody Map<String, String> payload) {
         String abstractText = payload.get("abstractText");
         // Now using the injected lowercase instance
